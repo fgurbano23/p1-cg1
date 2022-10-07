@@ -1,65 +1,40 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { CanvasLayout } from './canvas-layout';
-import { Guid } from 'guid-typescript';
-
-enum Primitive {
-  LINE = '1',
-  CIRCLE = '2',
-  ELLIPSE = '3',
-  RECTANGLE = '4',
-  TRIANGLE = '5',
-  BEZIER_CURVE = '6',
-  SELECTION = '7',
-}
-
-enum RenderMode {
-  SOFTWARE = 'software',
-  HARDWARE = 'hardware',
-}
-
-class CShape {
-  id: string;
-  color: string;
-  type: Primitive;
-
-  constructor(color: string, type: Primitive) {
-    this.id = Guid.create().toString();
-    this.id = this.color = color;
-    this.type = type;
-  }
-}
-
+import { CanvasModel } from './models/canvas.model';
+import { PrimitiveEnum } from './enum/primitive.enum';
+import { RenderModeEnum } from './enum/render-mode.enum';
+import { LineShapeModel } from './models/line-shape.model';
+import { VertexInterface } from './interfaces/vertex.interface';
+import { CanvasShapeModel } from './models/canvas-shape.model';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  primitiveEnum = Primitive;
-  renderModeEnum = RenderMode;
+  primitiveEnum = PrimitiveEnum;
+  renderModeEnum = RenderModeEnum;
 
   @ViewChild('layout', { static: true }) layout: ElementRef | undefined;
 
-  // @ts-ignore
-  canvas: CanvasLayout;
-  ctx: any;
+  canvas!: CanvasModel;
 
-  action: string | undefined = Primitive.LINE;
-  renderMode: string = RenderMode.HARDWARE;
+  action: string | undefined = this.primitiveEnum.LINE;
+  renderMode: string = this.renderModeEnum.HARDWARE;
 
   // Se define el color negro como default
   useColor = '#000000';
 
   menuActions: any[] = [];
   elementsOnScreen: any[] = [];
+  currentShape: any | null = null;
   isDrawing = false;
 
   undoList: any[] = [];
-
   currentPoints: any[] = [];
 
-  constructor(private fb: FormBuilder) {}
+  mouseMoveXY: VertexInterface | null = null;
+
+  constructor() {}
 
   getPrimitiveMenu() {
     const primitiveArr = Object.values(this.primitiveEnum);
@@ -72,8 +47,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.canvas = new CanvasLayout(this.layout);
-    this.ctx = this.canvas.element.getContext('2d');
+    this.canvas = new CanvasModel(this.layout);
 
     this.menuActions = this.getPrimitiveMenu();
     window.addEventListener('keydown', (e) => {
@@ -84,26 +58,26 @@ export class AppComponent implements OnInit {
   selectPrimitive(e: any) {
     if (['1', '2', '3', '4', '5', '6', '7'].includes(e.key)) {
       switch (e.key) {
-        case Primitive.LINE:
-          this.action = Primitive.LINE;
+        case PrimitiveEnum.LINE:
+          this.action = PrimitiveEnum.LINE;
           break;
-        case Primitive.CIRCLE:
-          this.action = Primitive.CIRCLE;
+        case PrimitiveEnum.CIRCLE:
+          this.action = PrimitiveEnum.CIRCLE;
           break;
-        case Primitive.ELLIPSE:
-          this.action = Primitive.ELLIPSE;
+        case PrimitiveEnum.ELLIPSE:
+          this.action = PrimitiveEnum.ELLIPSE;
           break;
-        case Primitive.RECTANGLE:
-          this.action = Primitive.RECTANGLE;
+        case PrimitiveEnum.RECTANGLE:
+          this.action = PrimitiveEnum.RECTANGLE;
           break;
-        case Primitive.TRIANGLE:
-          this.action = Primitive.TRIANGLE;
+        case PrimitiveEnum.TRIANGLE:
+          this.action = PrimitiveEnum.TRIANGLE;
           break;
-        case Primitive.BEZIER_CURVE:
-          this.action = Primitive.BEZIER_CURVE;
+        case PrimitiveEnum.BEZIER_CURVE:
+          this.action = PrimitiveEnum.BEZIER_CURVE;
           break;
-        case Primitive.SELECTION:
-          this.action = Primitive.SELECTION;
+        case PrimitiveEnum.SELECTION:
+          this.action = PrimitiveEnum.SELECTION;
           break;
       }
     }
@@ -124,22 +98,42 @@ export class AppComponent implements OnInit {
   }
 
   updateCanvasAndDraws() {
-    this.canvas.setBackground(this.ctx);
+    this.canvas.setBackground();
     this.repaintLayout();
   }
 
   mouseDownHandler(e: MouseEvent) {
     this.isDrawing = true;
     // this.currentPoints.push({ x: e.clientX, y: e.clientY });
-    this.currentPoints.push(this.getCurrentXY(e.clientX, e.clientY));
+    // this.currentPoints.push();
+
+    const startXY = this.getCurrentXY(e.clientX, e.clientY);
+
+    switch (this.action) {
+      case PrimitiveEnum.LINE:
+        this.action = PrimitiveEnum.LINE;
+        const line = new LineShapeModel([startXY], this.useColor);
+        this.currentShape = line;
+        break;
+      default:
+        break;
+    }
   }
 
   mouseMoveHandler(e: MouseEvent) {
     if (this.isDrawing) {
-      // this.currentPoints.push({ x: e.clientX, y: e.clientY });
-      this.currentPoints.push(this.getCurrentXY(e.clientX, e.clientY));
+      this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
+      // Se podria crear una copia de la instancia y pasarse
+      const tempShapeVertexList = [
+        ...this.currentShape!.vertexList,
+        this.mouseMoveXY,
+      ];
+      const temporalShape = Object.create(this.currentShape);
+      temporalShape!.vertexList = tempShapeVertexList;
+
       this.updateCanvasAndDraws();
-      this.hardwareDraw(this.currentPoints);
+      // this.hardwareDraw(tempShapeVertexList);
+      this.hardwareDraw(temporalShape);
     }
   }
 
@@ -147,51 +141,41 @@ export class AppComponent implements OnInit {
     if (this.isDrawing) {
       this.isDrawing = false;
 
-      const length = this.currentPoints.length - 1;
-      const startVertex = {
-        x: this.currentPoints[0].x,
-        y: this.currentPoints[0].y,
-      };
-      const endVertex = {
-        x: this.currentPoints[length].x,
-        y: this.currentPoints[length].y,
-      };
+      this.currentShape?.vertexList.push(
+        this.getCurrentXY(e.clientX, e.clientY),
+      );
 
-      this.elementsOnScreen.push([startVertex, endVertex]);
       console.log(this.elementsOnScreen.length);
-      this.currentPoints = [];
+
+      this.elementsOnScreen.push(this.currentShape);
+      this.currentShape = null;
     }
   }
 
-  hardwareDraw(shapePoint: any[]) {
+  hardwareDraw(shapeInstance: any) {
     switch (this.action) {
-      case Primitive.LINE:
-        const length = shapePoint.length - 1;
-        this.ctx.beginPath();
-        this.ctx.moveTo(shapePoint[0].x, shapePoint[0].y);
-        this.ctx.lineTo(shapePoint[length].x, shapePoint[length].y);
-        this.ctx.stroke();
+      case PrimitiveEnum.LINE:
+        shapeInstance.drawByHardware();
         break;
-      case Primitive.CIRCLE:
+      case PrimitiveEnum.CIRCLE:
         break;
-      case Primitive.ELLIPSE:
+      case PrimitiveEnum.ELLIPSE:
         break;
-      case Primitive.RECTANGLE:
-        console.log('here');
+      case PrimitiveEnum.RECTANGLE:
         break;
-      case Primitive.TRIANGLE:
+      case PrimitiveEnum.TRIANGLE:
         break;
-      case Primitive.BEZIER_CURVE:
+      case PrimitiveEnum.BEZIER_CURVE:
         break;
-      case Primitive.SELECTION:
+      case PrimitiveEnum.SELECTION:
+        break;
+      default:
         break;
     }
   }
 
   repaintLayout() {
     this.elementsOnScreen.map((shape) => {
-      const { x: x0, y: y0 } = shape[0];
-      const { x: x1, y: y1 } = shape[1];
       this.hardwareDraw(shape);
     });
   }
@@ -217,13 +201,13 @@ export class AppComponent implements OnInit {
     }
   }
 
-  getCurrentXY(x: number, y: number) {
+  getCurrentXY(x: number, y: number): VertexInterface {
     return { x: x - this.canvas.offsetX, y: y - this.canvas.offsetY };
   }
 
   drawRectangle(x0: number, y0: number, mouseX: number, mouseY: number) {
     const rectWidth = mouseX - x0;
     const rectHeight = mouseY - y0;
-    this.ctx.strokeRect(x0, y0, rectWidth, rectHeight);
+    CanvasModel.ctx!.strokeRect(x0, y0, rectWidth, rectHeight);
   }
 }

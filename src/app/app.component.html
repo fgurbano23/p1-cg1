@@ -1,13 +1,9 @@
-<span>
-  Elements on screen :
-  {{this.elementsOnScreen.length}}
-</span>
 <div class="app-gui">
   <div class="container">
     <canvas
-      (mousedown)='mouseDownHandler($event)'
-      (mousemove)='mouseMoveHandler($event)'
-      (mouseup)='mouseUpHandler($event)'
+      (mousedown)="mouseDownHandler($event)"
+      (mousemove)="mouseMoveHandler($event)"
+      (mouseup)="mouseUpHandler($event)"
       #layout
       width="600"
       height="600"></canvas>
@@ -18,10 +14,9 @@
           type="color"
           [(ngModel)]="useColor" />
         <span>
-           {{ getRGB(useColor) }}
-      </span>
+          {{ getRGB(useColor) }}
+        </span>
       </div>
-
 
       <!--PRIMITIVES-->
       <div class="menu__primitives">
@@ -43,8 +38,12 @@
       </div>
 
       <div class="menu__undo-redo">
-        <button (click)='undo()' [disabled]=' elementsOnScreen.length === 0'>Undo</button>
-        <button (click)='redo()' [disabled]='undoList.length === 0'>redo</button>
+        <button
+          (click)="undo()"
+          [disabled]="elementsOnScreen.length === 0">
+          Undo
+        </button>
+        <!--<button (click)='redo()' [disabled]='undoList.length === 0'>redo</button>-->
       </div>
 
       <div class="menu__render-mode">
@@ -67,16 +66,20 @@
   </div>
 
   <form>
+    <span>
+      Elements on screen :
+      {{ this.elementsOnScreen.length }}
+    </span>
     <fieldset>
       <legend>Canvas</legend>
       <label for="canvasColor"> Background: </label>
       <input
-        [(ngModel)]='canvas.background'
+        [(ngModel)]="canvas.background"
         [ngModelOptions]="{ standalone: true }"
         id="canvasColor"
         type="color"
         (input)="updateCanvasAndDraws()" />
-      <br>
+      <br />
     </fieldset>
   </form>
 </div>
