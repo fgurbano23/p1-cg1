@@ -1,0 +1,54 @@
+.app-gui {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+canvas {
+  border: solid 1px gray;
+  cursor: crosshair;
+}
+
+.container {
+  width: fit-content;
+}
+
+.menu {
+  background: #e2e1e4dd;
+  padding: 10px;
+  box-shadow: 2px 2px 6px grey;
+  border-radius: 10px;
+  display: flex;
+}
+
+.menu__primitives {
+  margin: auto;
+}
+
+.menu__primitives input[type=radio] {
+  display: none;
+}
+
+.menu__primitives input[type=radio]+label {
+  border: solid 1px gray;
+  padding: 5px;
+  vertical-align: text-bottom;
+  cursor: pointer;
+}
+
+.menu__primitives input[type=radio]:checked+ label {
+  background: #b7b3b3;
+  outline: solid 1px #545454;
+}
+
+.menu__primitives input[type=radio]+label img {
+  vertical-align: bottom;
+}
+
+.menu__undo-redo {
+  margin: auto;
+}
+
+.menu__render-mode{
+  margin: auto;
+}
