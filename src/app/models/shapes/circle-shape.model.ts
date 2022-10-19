@@ -19,6 +19,8 @@ export class CircleShapeModel extends CanvasShapeModel {
     const length = this.vertexList.length - 1;
 
     const xc = (this.vertexList[0].x + this.vertexList[length].x) / 2;
+    // const yc = (this.vertexList[0].y + this.vertexList[length].y) / 2;
+
     // Se fija para evitar desplazamientos en el eje y
     const yc = this.vertexList[0].y;
 
@@ -55,7 +57,16 @@ export class CircleShapeModel extends CanvasShapeModel {
   }
 
   isInBounds(x: number, y: number): boolean {
-    return false;
+    const length = this.vertexList.length - 1;
+    const xc = (this.vertexList[0].x + this.vertexList[length].x) / 2;
+    const yc = this.vertexList[0].y;
+
+    this.r = Math.abs(this.vertexList[length].x - this.vertexList[0].x) / 2;
+
+    const inner = Math.abs((x - xc) * (x - xc)) + Math.abs((y - yc) * (y - yc));
+    const d = Math.sqrt(inner);
+
+    return d <= this.r;
   }
 
   setCoords(x: number, y: number) {

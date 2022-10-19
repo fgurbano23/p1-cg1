@@ -122,7 +122,8 @@ export class AppComponent implements OnInit {
         return select;
       });
 
-      if (isOnScreen) {
+      if (isOnScreen.length > 0) {
+        alert('selected');
         this.updateCanvasAndDraws();
       }
 

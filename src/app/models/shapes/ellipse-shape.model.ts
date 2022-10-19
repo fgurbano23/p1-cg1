@@ -107,7 +107,19 @@ export class EllipseShapeModel extends CanvasShapeModel {
   }
 
   isInBounds(x: number, y: number): boolean {
-    return false;
+    const length = this.vertexList.length - 1;
+
+    const xc = (this.vertexList[0].x + this.vertexList[length].x) / 2;
+    const yc = (this.vertexList[0].y + this.vertexList[length].y) / 2;
+
+    this.rX = Math.abs(this.vertexList[length].x - this.vertexList[0].x) / 2;
+    this.rY = Math.abs(this.vertexList[length].y - this.vertexList[0].y) / 2;
+
+    const Rx2 = this.rX * this.rX;
+    const Ry2 = this.rY * this.rY;
+
+    // https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse
+    return ((x - xc) * (x - xc)) / Rx2 + ((y - yc) * (y - yc)) / Ry2 <= 1;
   }
 
   setCoords(x: number, y: number) {
