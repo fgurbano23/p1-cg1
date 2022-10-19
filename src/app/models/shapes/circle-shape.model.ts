@@ -63,6 +63,7 @@ export class CircleShapeModel extends CanvasShapeModel {
 
     this.r = Math.abs(this.vertexList[length].x - this.vertexList[0].x) / 2;
 
+    // https://math.stackexchange.com/questions/198764/how-to-know-if-a-point-is-inside-a-circle
     const inner = Math.abs((x - xc) * (x - xc)) + Math.abs((y - yc) * (y - yc));
     const d = Math.sqrt(inner);
 
