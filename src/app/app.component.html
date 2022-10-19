@@ -1,18 +1,27 @@
 <div class="app-gui">
-  <div class="container">
+  <div class="canvas-container">
     <canvas
+      appCursor
       (mousedown)="mouseDownHandler($event)"
       (mousemove)="mouseMoveHandler($event)"
       (mouseup)="mouseUpHandler($event)"
+      (mouseout)='clearCanvasAndCurrentDraw()'
       #layout
       width="600"
       height="600"></canvas>
     <div class="menu">
       <!--COLOR-->
       <div>
+<!--        <input-->
+<!--          width='22' height='22'-->
+<!--          type="color"-->
+<!--          [(ngModel)]="useColor" />-->
+
         <input
+          width='22' height='22'
           type="color"
           [(ngModel)]="useColor" />
+
         <span>
           {{ getRGB(useColor) }}
         </span>
@@ -22,11 +31,13 @@
       <div class="menu__primitives">
         <ng-container *ngFor="let menuItem of menuActions">
           <input
+            class='btn'
             type="radio"
             [id]="menuItem.id"
             [value]="menuItem.id"
             name="drawPrimitive"
             [(ngModel)]="action"
+            (input)='clearCurrentShape()'
             [ngModelOptions]="{ standalone: true }" />
           <label [for]="menuItem.id">
             <img
@@ -38,12 +49,12 @@
       </div>
 
       <div class="menu__undo-redo">
-        <button
+        <button class='btn'
           (click)="undo()"
           [disabled]="elementsOnScreen.length === 0">
           Undo
         </button>
-        <!--<button (click)='redo()' [disabled]='undoList.length === 0'>redo</button>-->
+        <button class='btn' (click)='redo()' [disabled]='undoList.length === 0'>redo</button>
       </div>
 
       <div class="menu__render-mode">
@@ -79,7 +90,20 @@
         id="canvasColor"
         type="color"
         (input)="updateCanvasAndDraws()" />
-      <br />
+      <br>
+      <br>
+
+      <div>
+        <label for='file'>Load File:</label>
+        <br>
+        <input type='file' id='file' #loadFile (change)='getFromFile($event)' accept=".txt">
+      </div>
     </fieldset>
+
+    <br>
+    <div style='display: flex; justify-content: center'>
+      <button type='button' class='btn btn-danger' (click)='clearCanvas()'>Clear canvas</button>
+    </div>
+
   </form>
 </div>

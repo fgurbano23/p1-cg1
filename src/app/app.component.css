@@ -6,10 +6,13 @@
 
 canvas {
   border: solid 1px gray;
+}
+
+.drawing {
   cursor: crosshair;
 }
 
-.container {
+.canvas-container{
   width: fit-content;
 }
 
