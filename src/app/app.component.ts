@@ -375,4 +375,10 @@ export class AppComponent implements OnInit {
         break;
     }
   }
+
+  swap(index: number, targetIndex: number) {
+    let tempShape = this.elementsOnScreen.slice(targetIndex, 1);
+    this.elementsOnScreen[targetIndex] = this.elementsOnScreen[index];
+    this.elementsOnScreen[index] = tempShape;
+  }
 }
