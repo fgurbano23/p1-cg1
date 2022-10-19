@@ -32,7 +32,8 @@ export class AppComponent implements OnInit {
   renderMode: string = this.renderModeEnum.HARDWARE;
 
   // Se define el color negro como default
-  useColor = '#000000';
+  useStrokeColor = '#000000';
+  useBackgroundColor = '#ffffff';
 
   menuActions: any[] = [];
   elementsOnScreen: any[] = [];
@@ -75,6 +76,38 @@ export class AppComponent implements OnInit {
       if (e.key === 'x') {
         this.clearCanvas();
       }
+
+      if (e.key === '+' || e.key === '-') {
+        if (this.currentShape && this.action == this.primitiveEnum.SELECTION) {
+          this.moveLevel(e.key);
+        }
+      }
+
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        if (this.currentShape && this.action == this.primitiveEnum.SELECTION) {
+          this.removeSelectedShape();
+        }
+      }
+
+      if (e.key === 'f') {
+        if (this.currentShape && this.action == this.primitiveEnum.SELECTION) {
+          this.sendToFront();
+        }
+      }
+
+      if (e.key === 'b') {
+        if (this.currentShape && this.action == this.primitiveEnum.SELECTION) {
+          this.sendToBack();
+        }
+      }
+
+      if (e.key === 'h') {
+        if (this.renderMode === this.renderModeEnum.HARDWARE) {
+          this.renderMode = this.renderModeEnum.SOFTWARE;
+          return;
+        }
+        this.renderMode = this.renderModeEnum.HARDWARE;
+      }
     });
   }
 
@@ -106,27 +139,32 @@ export class AppComponent implements OnInit {
   }
 
   updateCanvasAndDraws() {
-    console.log('here');
+    console.log(this.currentShape);
     this.canvas.setBackground();
     this.repaintLayout();
+  }
+
+  selectFirstShapeWithPointInBounds(startXY: VertexInterface) {
+    // need to be reversed to get the last shape draw
+    for (let i = this.elementsOnScreen.length - 1; i >= 0; i--) {
+      const shape = this.elementsOnScreen[i];
+      if (shape?.isInBounds(startXY.x, startXY.y)) {
+        this.elementsOnScreen[i].setSelection(true);
+        this.updateCanvasAndDraws();
+        this.currentShape = shape;
+        // alert('selected');
+        break;
+      }
+    }
   }
 
   mouseDownHandler(e: MouseEvent) {
     const startXY = this.getCurrentXY(e.clientX, e.clientY);
 
-    // Seleccinoar
+    // Select first shape intersected with the points
     if (this.action === this.primitiveEnum.SELECTION) {
-      const isOnScreen = this.elementsOnScreen.filter((shape) => {
-        const select = shape?.isInBounds(startXY.x, startXY.y);
-        shape.setSelection(select);
-        return select;
-      });
-
-      if (isOnScreen.length > 0) {
-        alert('selected');
-        this.updateCanvasAndDraws();
-      }
-
+      this.isDrawing = false;
+      this.selectFirstShapeWithPointInBounds(startXY);
       return;
     }
 
@@ -137,23 +175,43 @@ export class AppComponent implements OnInit {
     let shape;
     switch (this.action) {
       case PrimitiveEnum.LINE:
-        shape = new LineShapeModel([startXY], this.useColor);
+        shape = new LineShapeModel(
+          [startXY],
+          this.useStrokeColor,
+          this.useBackgroundColor,
+        );
         this.currentShape = shape;
         break;
       case PrimitiveEnum.RECTANGLE:
-        shape = new RectangleShapeModel([startXY], this.useColor);
+        shape = new RectangleShapeModel(
+          [startXY],
+          this.useStrokeColor,
+          this.useBackgroundColor,
+        );
         this.currentShape = shape;
         break;
       case PrimitiveEnum.TRIANGLE:
-        shape = new TriangleShapeModel([startXY], this.useColor);
+        shape = new TriangleShapeModel(
+          [startXY],
+          this.useStrokeColor,
+          this.useBackgroundColor,
+        );
         this.currentShape = shape;
         break;
       case PrimitiveEnum.CIRCLE:
-        shape = new CircleShapeModel([startXY], this.useColor);
+        shape = new CircleShapeModel(
+          [startXY],
+          this.useStrokeColor,
+          this.useBackgroundColor,
+        );
         this.currentShape = shape;
         break;
       case PrimitiveEnum.ELLIPSE:
-        shape = new EllipseShapeModel([startXY], this.useColor);
+        shape = new EllipseShapeModel(
+          [startXY],
+          this.useStrokeColor,
+          this.useBackgroundColor,
+        );
         this.currentShape = shape;
         break;
       default:
@@ -201,7 +259,7 @@ export class AppComponent implements OnInit {
       this.currentShape?.vertexList.push({ x: x1, y: y1 });
 
       this.elementsOnScreen.push(this.currentShape);
-      this.currentShape = null;
+      // TODO this.currentShape = null;
     }
   }
 
@@ -243,7 +301,7 @@ export class AppComponent implements OnInit {
   }
 
   clearCanvasAndCurrentDraw() {
-    this.clearCurrentShape();
+    // TODO this.clearCurrentShape();
     this.updateCanvasAndDraws();
   }
 
@@ -329,6 +387,7 @@ export class AppComponent implements OnInit {
         this.currentShape = new CircleShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
+          this.useBackgroundColor,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -341,6 +400,7 @@ export class AppComponent implements OnInit {
         this.currentShape = new EllipseShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
+          this.useBackgroundColor,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -354,6 +414,7 @@ export class AppComponent implements OnInit {
         this.currentShape = new RectangleShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
+          this.useBackgroundColor,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -370,6 +431,7 @@ export class AppComponent implements OnInit {
         this.currentShape = new LineShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
+          this.useBackgroundColor,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -378,8 +440,78 @@ export class AppComponent implements OnInit {
   }
 
   swap(index: number, targetIndex: number) {
-    let tempShape = this.elementsOnScreen.slice(targetIndex, 1);
+    let tempShape = this.elementsOnScreen.slice(
+      targetIndex,
+      targetIndex + 1,
+    )[0];
+
     this.elementsOnScreen[targetIndex] = this.elementsOnScreen[index];
     this.elementsOnScreen[index] = tempShape;
+  }
+
+  moveLevel(action: string) {
+    const length = this.elementsOnScreen.length;
+
+    const index = this.elementsOnScreen.findIndex(
+      (shape) => shape.id === this.currentShape.id,
+    );
+
+    if (action === '+') {
+      if (index === length - 1) {
+        return;
+      }
+
+      this.swap(index, index + 1);
+    } else {
+      if (index === 0) {
+        return;
+      }
+
+      this.swap(index, index - 1);
+    }
+
+    this.updateCanvasAndDraws();
+  }
+
+  removeSelectedShape() {
+    const index = this.elementsOnScreen.findIndex(
+      (shape) => shape.id === this.currentShape.id,
+    );
+
+    this.elementsOnScreen.splice(index, 1);
+    this.updateCanvasAndDraws();
+  }
+
+  sendToFront() {
+    console.log('here');
+    const index = this.elementsOnScreen.findIndex(
+      (shape) => shape.id === this.currentShape.id,
+    );
+
+    if (index === this.elementsOnScreen.length - 1) {
+      return;
+    }
+
+    const temp = this.elementsOnScreen.slice(index, index + 1)[0];
+    this.elementsOnScreen.splice(index, 1);
+
+    this.elementsOnScreen.push(temp);
+    this.updateCanvasAndDraws();
+  }
+
+  sendToBack() {
+    const index = this.elementsOnScreen.findIndex(
+      (shape) => shape.id === this.currentShape.id,
+    );
+
+    if (index === 0) {
+      return;
+    }
+
+    const temp = this.elementsOnScreen.slice(index, index + 1)[0];
+    this.elementsOnScreen.splice(index, 1);
+
+    this.elementsOnScreen.unshift(temp);
+    this.updateCanvasAndDraws();
   }
 }

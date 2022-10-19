@@ -8,8 +8,12 @@ export class RectangleShapeModel
   extends CanvasShapeModel
   implements DrawInterface
 {
-  constructor(vertexList: Array<VertexInterface>, color: string) {
-    super(PrimitiveEnum.RECTANGLE, vertexList, color);
+  constructor(
+    vertexList: Array<VertexInterface>,
+    color: string,
+    background: string,
+  ) {
+    super(PrimitiveEnum.RECTANGLE, vertexList, color, background);
   }
 
   drawByHardware(): void {
@@ -18,11 +22,11 @@ export class RectangleShapeModel
 
     CanvasModel.ctx!.beginPath();
 
-    if (this.isSelected) {
-      CanvasModel.ctx!.setLineDash([10, 15]);
-    } else {
-      CanvasModel.ctx!.setLineDash([]);
-    }
+    // if (this.isSelected) {
+    //   CanvasModel.ctx!.setLineDash([10, 15]);
+    // } else {
+    //   CanvasModel.ctx!.setLineDash([]);
+    // }
 
     CanvasModel.ctx!.strokeStyle = this.isSelected
       ? this.outlineColor
@@ -45,11 +49,11 @@ export class RectangleShapeModel
     const x1 = this.vertexList[0].x + width;
     const y1 = this.vertexList[0].y + height;
 
-    if (this.isSelected) {
-      CanvasModel.ctx!.setLineDash([10, 15]);
-    } else {
-      CanvasModel.ctx!.setLineDash([]);
-    }
+    // if (this.isSelected) {
+    //   CanvasModel.ctx!.setLineDash([10, 15]);
+    // } else {
+    //   CanvasModel.ctx!.setLineDash([]);
+    // }
 
     this.plotLine(
       this.vertexList[0].x,
@@ -86,8 +90,8 @@ export class RectangleShapeModel
     const isOnXBounds = x0 <= x && x <= x1;
     const isOnYBounds = y0 <= y && y <= y1;
 
-    console.log(`${x0} <= ${x} && ${x} <= ${x1} === ${isOnXBounds}`);
-    console.log(` ${y0} >= ${y} && ${y} <= ${y1} === ${isOnYBounds}`);
+    // console.log(`${x0} <= ${x} && ${x} <= ${x1} === ${isOnXBounds}`);
+    // console.log(` ${y0} >= ${y} && ${y} <= ${y1} === ${isOnYBounds}`);
     return isOnXBounds && isOnYBounds;
   }
 
@@ -122,14 +126,27 @@ export class RectangleShapeModel
   }
 
   fillRectangle() {
-    let xK = this.vertexList[0].x + 1;
+    const startAtX =
+      this.vertexList[0].x < this.vertexList[1].x
+        ? this.vertexList[0].x + 1
+        : this.vertexList[1].x + 1;
+    let xK = startAtX;
+
+    const stopX = () => {
+      return this.vertexList[0].x < this.vertexList[1].x
+        ? xK > this.vertexList[1].x - 1
+        : xK > this.vertexList[0].x - 1;
+    };
 
     let isFilled = false;
     while (!isFilled) {
-      if (xK >= this.vertexList[1].x) {
+      if (stopX()) {
         isFilled = true;
       }
+
+      // https://stackoverflow.com/questions/23612000/why-is-my-strokestyle-transparent#:~:text=When%20drawing%20lines%20on%20a,50%25%20transparent%20over%20two%20pixels.
       CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
       CanvasModel.ctx!.moveTo(xK, this.vertexList[1].y);
       CanvasModel.ctx!.lineTo(xK, this.vertexList[0].y);
       CanvasModel.ctx!.stroke();

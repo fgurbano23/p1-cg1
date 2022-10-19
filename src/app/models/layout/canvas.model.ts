@@ -21,6 +21,7 @@ export class CanvasModel {
     this.offsetY = this.element.offsetTop;
 
     CanvasModel.ctx = this.element.getContext('2d');
+    CanvasModel.ctx!.globalAlpha = 1.0;
   }
 
   setBackground() {

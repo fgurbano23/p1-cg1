@@ -8,8 +8,12 @@ export class CircleShapeModel extends CanvasShapeModel {
   public y: number;
   public r: number;
 
-  constructor(vertexList: Array<VertexInterface>, color: string) {
-    super(PrimitiveEnum.CIRCLE, vertexList, color);
+  constructor(
+    vertexList: Array<VertexInterface>,
+    color: string,
+    background: string,
+  ) {
+    super(PrimitiveEnum.CIRCLE, vertexList, color, background);
     this.x = 0;
     this.y = 0;
     this.r = 0;
@@ -78,56 +82,56 @@ export class CircleShapeModel extends CanvasShapeModel {
   plotPoints(xc: number, yc: number) {
     // Print background line by line
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc + this.x, yc + this.y);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc - this.x, yc + this.y);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc + this.x, yc - this.y);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc - this.x, yc - this.y);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc + this.y, yc + this.x);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc - this.y, yc + this.x);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc + this.y, yc - this.x);
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = 'red';
+    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
     CanvasModel.ctx!.moveTo(xc, yc);
     CanvasModel.ctx?.lineTo(xc - this.y, yc - this.x);
     CanvasModel.ctx!.stroke();

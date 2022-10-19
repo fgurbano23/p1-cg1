@@ -12,6 +12,10 @@ canvas {
   cursor: crosshair;
 }
 
+.selecting {
+  cursor: pointer;
+}
+
 .canvas-container{
   width: fit-content;
 }
@@ -54,4 +58,9 @@ canvas {
 
 .menu__render-mode{
   margin: auto;
+}
+
+
+.form-control {
+  font-size: 12px;
 }

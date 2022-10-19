@@ -8,8 +8,12 @@ export class TriangleShapeModel
   extends CanvasShapeModel
   implements DrawInterface
 {
-  constructor(vertexList: Array<VertexInterface>, color: string) {
-    super(PrimitiveEnum.TRIANGLE, vertexList, color);
+  constructor(
+    vertexList: Array<VertexInterface>,
+    color: string,
+    background: string,
+  ) {
+    super(PrimitiveEnum.TRIANGLE, vertexList, color, background);
   }
 
   drawByHardware(): void {

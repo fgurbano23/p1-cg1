@@ -5,8 +5,12 @@ import { PrimitiveEnum } from '../../enum/primitive.enum';
 import { CanvasModel } from '../layout/canvas.model';
 
 export class LineShapeModel extends CanvasShapeModel implements DrawInterface {
-  constructor(vertexList: Array<VertexInterface>, color: string) {
-    super(PrimitiveEnum.LINE, vertexList, color);
+  constructor(
+    vertexList: Array<VertexInterface>,
+    color: string,
+    background: string,
+  ) {
+    super(PrimitiveEnum.LINE, vertexList, color, background);
   }
 
   drawByHardware(): void {
