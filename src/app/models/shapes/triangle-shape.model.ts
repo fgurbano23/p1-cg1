@@ -17,23 +17,42 @@ export class TriangleShapeModel
   }
 
   drawByHardware(): void {
-    const width = this.vertexList[1].x - this.vertexList[0].x;
-    const height = this.vertexList[1].y - this.vertexList[0].y;
+    // Draw the initial points
+    if (this.vertexList.length < 3) {
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.fillStyle = 'red';
+      CanvasModel.ctx!.fillRect(
+        this.vertexList[0].x,
+        this.vertexList[0].y,
+        3,
+        3,
+      );
+      if (this.vertexList.length === 2) {
+        const length = this.vertexList.length - 1;
+        CanvasModel.ctx!.fillRect(
+          this.vertexList[length].x,
+          this.vertexList[length].y,
+          3,
+          3,
+        );
+      }
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+      return;
+    }
 
-    const pointX =
-      this.vertexList[1].x -
-      2 * Math.abs(this.vertexList[1].x - this.vertexList[0].x);
-
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.color;
-    CanvasModel.ctx!.moveTo(this.vertexList[0].x, this.vertexList[0].y);
-    CanvasModel.ctx!.lineTo(this.vertexList[1].x, this.vertexList[1].y);
-
-    CanvasModel.ctx!.lineTo(pointX, this.vertexList[1].y);
-    CanvasModel.ctx!.lineTo(this.vertexList[0].x, this.vertexList[0].y);
-
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+    // Draw the triangle
+    if (this.vertexList.length === 3) {
+      console.log('DRAW TRIANGLE', this.vertexList);
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.moveTo(this.vertexList[0].x, this.vertexList[0].y);
+      CanvasModel.ctx!.lineTo(this.vertexList[1].x, this.vertexList[1].y);
+      CanvasModel.ctx!.lineTo(this.vertexList[2].x, this.vertexList[2].y);
+      CanvasModel.ctx!.lineTo(this.vertexList[0].x, this.vertexList[0].y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+      return;
+    }
   }
 
   drawBySoftware(): void {

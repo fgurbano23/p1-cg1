@@ -140,7 +140,6 @@ export class AppComponent implements OnInit {
   }
 
   updateCanvasAndDraws() {
-    console.log(this.currentShape);
     this.canvas.setBackground();
     this.repaintLayout();
   }
@@ -174,6 +173,19 @@ export class AppComponent implements OnInit {
       this.isDrawing = false;
       this.selectFirstShapeWithPointInBounds(startXY);
       return;
+    }
+
+    // setting de points of a triangle
+    if (this.currentShape) {
+      if (
+        this.currentShape.type === this.primitiveEnum.TRIANGLE &&
+        this.currentShape.vertexList.length < 3 &&
+        this.isDrawing
+      ) {
+        this.isDrawing = true;
+        this.currentShape?.vertexList.push(startXY);
+        return;
+      }
     }
 
     this.isDrawing = true;
@@ -227,6 +239,41 @@ export class AppComponent implements OnInit {
     }
   }
 
+  mouseUpHandler(e: MouseEvent) {
+    this.mouseDown = false;
+
+    if (!this.currentShape) {
+      return;
+    }
+
+    const { x: x0, y: y0 } = this.currentShape.vertexList[0];
+    const { x: x1, y: y1 } = this.getCurrentXY(e.clientX, e.clientY);
+
+    if (this.isSamePositionAtStartPoint(x0, y0, x1, y1)) {
+      return;
+    }
+
+    if (
+      this.currentShape.type === this.primitiveEnum.TRIANGLE &&
+      this.isDrawing
+    ) {
+      if (this.currentShape.vertexList.length === 3) {
+        this.isDrawing = false;
+        this.elementsOnScreen.push(this.currentShape);
+        this.updateCanvasAndDraws();
+        this.draw(this.currentShape);
+      }
+      return;
+    }
+
+    if (this.isDrawing) {
+      this.isDrawing = false;
+      this.currentShape?.vertexList.push({ x: x1, y: y1 });
+      this.elementsOnScreen.push(this.currentShape);
+      // TODO this.currentShape = null;
+    }
+  }
+
   mouseMoveHandler(e: MouseEvent) {
     if (
       this.currentShape &&
@@ -260,9 +307,16 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (this.currentShape) {
+      if (this.currentShape.type === this.primitiveEnum.TRIANGLE) {
+        this.updateCanvasAndDraws();
+        this.draw(this.currentShape);
+        return;
+      }
+    }
+
     if (this.isDrawing && this.currentShape) {
       this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
-      // Se podria crear una copia de la instancia y pasarse
       const tempShapeVertexList = [
         ...this.currentShape!.vertexList,
         this.mouseMoveXY,
@@ -272,37 +326,12 @@ export class AppComponent implements OnInit {
       temporalShape!.vertexList = tempShapeVertexList;
 
       this.updateCanvasAndDraws();
-
       this.draw(temporalShape);
     }
   }
 
   isSamePositionAtStartPoint(x0: number, y0: number, x1: number, y1: number) {
     return x0 === x1 && y0 === y1;
-  }
-
-  mouseUpHandler(e: MouseEvent) {
-    this.mouseDown = false;
-
-    if (!this.currentShape) {
-      return;
-    }
-
-    const { x: x0, y: y0 } = this.currentShape.vertexList[0];
-    const { x: x1, y: y1 } = this.getCurrentXY(e.clientX, e.clientY);
-
-    if (this.isSamePositionAtStartPoint(x0, y0, x1, y1)) {
-      return;
-    }
-
-    if (this.isDrawing) {
-      this.isDrawing = false;
-
-      this.currentShape?.vertexList.push({ x: x1, y: y1 });
-
-      this.elementsOnScreen.push(this.currentShape);
-      // TODO this.currentShape = null;
-    }
   }
 
   draw(shapeInstance: any) {
@@ -526,7 +555,6 @@ export class AppComponent implements OnInit {
   }
 
   sendToFront() {
-    console.log('here');
     const index = this.elementsOnScreen.findIndex(
       (shape) => shape.id === this.currentShape.id,
     );
