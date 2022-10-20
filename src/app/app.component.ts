@@ -176,6 +176,20 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (
+      this.currentShape &&
+      this.currentShape?.type === this.primitiveEnum.TRIANGLE &&
+      this.currentShape?.vertexList.length < 3
+    ) {
+      this.currentShape.vertexList = [
+        ...this.currentShape!.vertexList,
+        startXY,
+      ];
+      this.updateCanvasAndDraws();
+      this.draw(this.currentShape);
+      return;
+    }
+
     this.isDrawing = true;
     this.currentShape = null;
     this.elementsOnScreen = this.clearSelection();
@@ -260,6 +274,16 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (
+      this.isDrawing &&
+      this.currentShape &&
+      this.currentShape?.type === this.primitiveEnum.TRIANGLE
+    ) {
+      this.updateCanvasAndDraws();
+      this.draw(this.currentShape);
+      return;
+    }
+
     if (this.isDrawing && this.currentShape && this.mouseDown) {
       this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
       // Se podria crear una copia de la instancia y pasarse
@@ -277,10 +301,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  isSamePositionAtStartPoint(x0: number, y0: number, x1: number, y1: number) {
-    return x0 === x1 && y0 === y1;
-  }
-
   mouseUpHandler(e: MouseEvent) {
     this.mouseDown = false;
 
@@ -295,6 +315,18 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (
+      this.currentShape &&
+      this.currentShape?.type === this.primitiveEnum.TRIANGLE
+    ) {
+      if (this.currentShape?.vertexList.length === 3) {
+        this.elementsOnScreen.push(this.currentShape);
+        this.isDrawing = false;
+      }
+      this.updateCanvasAndDraws();
+      return;
+    }
+
     if (this.isDrawing) {
       this.isDrawing = false;
 
@@ -303,6 +335,10 @@ export class AppComponent implements OnInit {
       this.elementsOnScreen.push(this.currentShape);
       // TODO this.currentShape = null;
     }
+  }
+
+  isSamePositionAtStartPoint(x0: number, y0: number, x1: number, y1: number) {
+    return x0 === x1 && y0 === y1;
   }
 
   draw(shapeInstance: any) {
@@ -464,6 +500,16 @@ export class AppComponent implements OnInit {
 
       case FilePrimitivesEnum.TRIANGLE:
       case FilePrimitivesEnum.FILLED_TRIANGLE:
+        vertexList = this.getPoints(currentLine, 3);
+        color = this.getColors(currentLine);
+        console.log(this.getHexFromRGB(color[0], color[1], color[2]));
+        this.currentShape = new TriangleShapeModel(
+          vertexList,
+          this.getHexFromRGB(color[0], color[1], color[2]),
+          this.useBackgroundColor,
+        );
+        this.elementsOnScreen.push(this.currentShape);
+        this.updateCanvasAndDraws();
         break;
 
       case FilePrimitivesEnum.LINE:
