@@ -379,7 +379,7 @@ export class AppComponent implements OnInit {
   }
 
   clearCanvasAndCurrentDraw() {
-    // TODO this.clearCurrentShape();
+    // this.clearCurrentShape();
     this.updateCanvasAndDraws();
   }
 
