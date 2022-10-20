@@ -260,7 +260,7 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    if (this.isDrawing && this.currentShape) {
+    if (this.isDrawing && this.currentShape && this.mouseDown) {
       this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
       // Se podria crear una copia de la instancia y pasarse
       const tempShapeVertexList = [
