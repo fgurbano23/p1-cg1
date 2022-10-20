@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
 
   canvas!: CanvasModel;
 
-  action: string | undefined = this.primitiveEnum.LINE;
+  action: string | undefined = this.primitiveEnum.SELECTION;
   renderMode: string = this.renderModeEnum.HARDWARE;
 
   // Se define el color negro como default
@@ -319,7 +319,7 @@ export class AppComponent implements OnInit {
       this.currentShape &&
       this.currentShape?.type === this.primitiveEnum.TRIANGLE
     ) {
-      if (this.currentShape?.vertexList.length === 3) {
+      if (this.currentShape?.vertexList.length === 3 && this.isDrawing) {
         this.elementsOnScreen.push(this.currentShape);
         this.isDrawing = false;
       }
