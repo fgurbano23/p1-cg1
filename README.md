@@ -4,6 +4,17 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.3.
 
+## Execute the project with docker
+
+Build dist folder with `ng build` 
+
+Create the image `docker build -t apache-p1-cg1 .`
+
+Run the image `docker run -dit --name p1-cg1 -p 8080:80 apache-p1-cg1` if you need to change the port then
+`docker run -dit --name p1-cg1 -p <custom-port>:80 apache-p1-cg1`
+
+Check the app on port 8080 or on `<custom-port>`
+
 ## Base requirements
 
 Install nodejs and angular cli `npm install -g @angular/cli`
