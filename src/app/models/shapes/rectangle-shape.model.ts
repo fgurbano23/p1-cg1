@@ -28,12 +28,13 @@ export class RectangleShapeModel
     // }
 
     CanvasModel.ctx!.strokeStyle = this.color;
-    CanvasModel.ctx!.strokeRect(
+    CanvasModel.ctx!.rect(
       this.vertexList[0].x,
       this.vertexList[0].y,
       width,
       height,
     );
+    CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
     this.fillRectangle();
@@ -71,7 +72,6 @@ export class RectangleShapeModel
     );
 
     this.fillRectangle();
-    // this.drawVertex();
   }
 
   isInBounds(x: number, y: number): boolean {
