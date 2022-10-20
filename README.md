@@ -1,6 +1,13 @@
+
+
 # V25369306P1Cg1
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.3.
+
+## Base requirements
+
+Install nodejs and angular cli `npm install -g @angular/cli`
+
 
 ## Development server
 
