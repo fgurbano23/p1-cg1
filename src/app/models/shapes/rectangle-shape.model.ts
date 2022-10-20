@@ -21,16 +21,13 @@ export class RectangleShapeModel
     const height = this.vertexList[1].y - this.vertexList[0].y;
 
     CanvasModel.ctx!.beginPath();
-
     // if (this.isSelected) {
     //   CanvasModel.ctx!.setLineDash([10, 15]);
     // } else {
     //   CanvasModel.ctx!.setLineDash([]);
     // }
 
-    CanvasModel.ctx!.strokeStyle = this.isSelected
-      ? this.outlineColor
-      : this.color;
+    CanvasModel.ctx!.strokeStyle = this.color;
     CanvasModel.ctx!.strokeRect(
       this.vertexList[0].x,
       this.vertexList[0].y,
@@ -78,6 +75,12 @@ export class RectangleShapeModel
   }
 
   isInBounds(x: number, y: number): boolean {
+    if (this.vertexList[1].x < this.vertexList[0].x) {
+      const tempVertex = { ...this.vertexList[1] };
+      this.vertexList.pop();
+      this.vertexList.unshift(tempVertex);
+    }
+
     const x0 = this.vertexList[0].x;
     const y0 = this.vertexList[0].y;
 
@@ -153,5 +156,13 @@ export class RectangleShapeModel
       CanvasModel.ctx!.closePath();
       xK++;
     }
+  }
+
+  getCenter() {
+    const length = this.vertexList.length - 1;
+    return {
+      x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
+      y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
+    };
   }
 }

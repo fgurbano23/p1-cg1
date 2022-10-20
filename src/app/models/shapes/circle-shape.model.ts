@@ -152,4 +152,12 @@ export class CircleShapeModel extends CanvasShapeModel {
     CanvasModel.ctx!.fill();
     CanvasModel.ctx!.closePath();
   }
+
+  getCenter() {
+    const length = this.vertexList.length - 1;
+    return {
+      x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
+      y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
+    };
+  }
 }

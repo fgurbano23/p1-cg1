@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
   currentPoints: any[] = [];
 
   mouseMoveXY: VertexInterface | null = null;
+  mouseDown = false;
 
   constructor(render: Renderer2) {}
 
@@ -146,19 +147,26 @@ export class AppComponent implements OnInit {
 
   selectFirstShapeWithPointInBounds(startXY: VertexInterface) {
     // need to be reversed to get the last shape draw
+    let found = false;
     for (let i = this.elementsOnScreen.length - 1; i >= 0; i--) {
       const shape = this.elementsOnScreen[i];
       if (shape?.isInBounds(startXY.x, startXY.y)) {
         this.elementsOnScreen[i].setSelection(true);
         this.updateCanvasAndDraws();
         this.currentShape = shape;
+        found = true;
         // alert('selected');
         break;
       }
     }
+
+    if (!found) {
+      this.currentShape = null;
+    }
   }
 
   mouseDownHandler(e: MouseEvent) {
+    this.mouseDown = true;
     const startXY = this.getCurrentXY(e.clientX, e.clientY);
 
     // Select first shape intersected with the points
@@ -220,6 +228,38 @@ export class AppComponent implements OnInit {
   }
 
   mouseMoveHandler(e: MouseEvent) {
+    if (
+      this.currentShape &&
+      this.action === this.primitiveEnum.SELECTION &&
+      this.mouseDown &&
+      this.currentShape.vertexList.length > 1
+    ) {
+      console.log('moving');
+      this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
+      const { x: xc, y: yc } = this.currentShape.getCenter();
+
+      const dX = Math.floor(xc - this.mouseMoveXY.x);
+      const dY = Math.floor(yc - this.mouseMoveXY.y);
+
+      console.log(
+        this.currentShape.vertexList[0].x,
+        this.currentShape.vertexList[0].y,
+        this.mouseMoveXY,
+        xc,
+        yc,
+        dX,
+        dY,
+      );
+
+      this.currentShape.vertexList.forEach((v: VertexInterface) => {
+        v.x = v.x - dX;
+        v.y = v.y - dY;
+      });
+      this.updateCanvasAndDraws();
+
+      return;
+    }
+
     if (this.isDrawing && this.currentShape) {
       this.mouseMoveXY = this.getCurrentXY(e.clientX, e.clientY);
       // Se podria crear una copia de la instancia y pasarse
@@ -242,6 +282,8 @@ export class AppComponent implements OnInit {
   }
 
   mouseUpHandler(e: MouseEvent) {
+    this.mouseDown = false;
+
     if (!this.currentShape) {
       return;
     }
@@ -479,6 +521,7 @@ export class AppComponent implements OnInit {
     );
 
     this.elementsOnScreen.splice(index, 1);
+    this.clearCurrentShape();
     this.updateCanvasAndDraws();
   }
 

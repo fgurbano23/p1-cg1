@@ -39,8 +39,30 @@ export class LineShapeModel extends CanvasShapeModel implements DrawInterface {
   }
 
   isInBounds(x: number, y: number): boolean {
-    return false;
+    console.log(x, y);
+    const m =
+      (this.vertexList[1].y - this.vertexList[0].y) /
+      (this.vertexList[1].x - this.vertexList[0].x);
+
+    // y = mx +b
+    // y - mx = b
+    const b = this.vertexList[1].y - m * this.vertexList[1].x;
+
+    // mx - y + b  = 0
+
+    const d = Math.abs(m * x + -y + b) / Math.sqrt(m * m + -1 * -1);
+
+    console.log(d);
+    return d <= 10;
   }
 
   drawVertex(): void {}
+
+  getCenter() {
+    const length = this.vertexList.length - 1;
+    return {
+      x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
+      y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
+    };
+  }
 }
