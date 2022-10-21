@@ -169,6 +169,8 @@ export class AppComponent implements OnInit {
 
     if (!found) {
       this.currentShape = null;
+      this.clearSelection();
+      this.updateCanvasAndDraws();
     }
   }
 
@@ -179,6 +181,7 @@ export class AppComponent implements OnInit {
     // Select first shape intersected with the points
     if (this.action === this.primitiveEnum.SELECTION) {
       this.isDrawing = false;
+      this.clearSelection();
       this.selectFirstShapeWithPointInBounds(startXY);
       return;
     }

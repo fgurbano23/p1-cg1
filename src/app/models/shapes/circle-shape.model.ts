@@ -55,6 +55,8 @@ export class CircleShapeModel extends CanvasShapeModel {
 
       this.plotPoints(xc, yc);
     }
+
+    this.drawSelectedShapeIfRequired();
   }
 
   drawByHardware(): void {
@@ -160,7 +162,19 @@ export class CircleShapeModel extends CanvasShapeModel {
     const length = this.vertexList.length - 1;
     return {
       x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
-      y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
+      y: Math.floor(this.vertexList[0].y),
     };
+  }
+
+  drawSelectedShapeIfRequired() {
+    if (this.isSelected) {
+      const length = this.vertexList.length - 1;
+      const xc = (this.vertexList[0].x + this.vertexList[length].x) / 2;
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.outlineColor;
+      CanvasModel.ctx?.rect(xc - 5, this.vertexList[0].y - 5, 10, 10);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+    }
   }
 }

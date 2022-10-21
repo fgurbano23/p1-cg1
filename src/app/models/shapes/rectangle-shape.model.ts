@@ -22,12 +22,6 @@ export class RectangleShapeModel
     const height = this.vertexList[1].y - this.vertexList[0].y;
 
     CanvasModel.ctx!.beginPath();
-    // if (this.isSelected) {
-    //   CanvasModel.ctx!.setLineDash([10, 15]);
-    // } else {
-    //   CanvasModel.ctx!.setLineDash([]);
-    // }
-
     CanvasModel.ctx!.strokeStyle = this.color;
     CanvasModel.ctx!.rect(
       this.vertexList[0].x,
@@ -38,7 +32,13 @@ export class RectangleShapeModel
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
 
-    this.fillRectangle();
+    if (this.filled) {
+      this.fillRectangle();
+    }
+
+    if (this.isSelected) {
+      this.drawSelectedShapeIfRequired();
+    }
   }
 
   drawBySoftware(): void {
@@ -72,7 +72,13 @@ export class RectangleShapeModel
       y1,
     );
 
-    this.fillRectangle();
+    if (this.filled) {
+      this.fillRectangle();
+    }
+
+    if (this.isSelected) {
+      this.drawSelectedShapeIfRequired();
+    }
   }
 
   isInBounds(x: number, y: number): boolean {
@@ -165,5 +171,16 @@ export class RectangleShapeModel
       x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
       y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
     };
+  }
+
+  drawSelectedShapeIfRequired() {
+    if (this.isSelected) {
+      const { x: xc, y: yc } = this.getCenter();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.outlineColor;
+      CanvasModel.ctx?.rect(xc - 5, yc - 5, 10, 10);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+    }
   }
 }

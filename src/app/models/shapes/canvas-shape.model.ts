@@ -10,7 +10,7 @@ export class CanvasShapeModel {
   vertexList: Array<VertexInterface> = [];
   type: PrimitiveEnum;
 
-  outlineColor = '#000';
+  outlineColor = '#42c2f5';
   isSelected = false;
   filled = false;
 

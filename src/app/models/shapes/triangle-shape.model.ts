@@ -66,6 +66,11 @@ export class TriangleShapeModel
       CanvasModel.ctx!.lineTo(this.vertexList[0].x, this.vertexList[0].y);
       CanvasModel.ctx!.stroke();
       CanvasModel.ctx!.closePath();
+
+      if (this.isSelected) {
+        this.drawSelectedShapeIfRequired();
+      }
+
       return;
     }
   }
@@ -147,6 +152,17 @@ export class TriangleShapeModel
       CanvasModel.ctx!.stroke();
       CanvasModel.ctx!.closePath();
       x++;
+    }
+  }
+
+  drawSelectedShapeIfRequired() {
+    if (this.isSelected) {
+      const { x: xc, y: yc } = this.getCenter();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.outlineColor;
+      CanvasModel.ctx?.rect(xc - 5, yc - 5, 10, 10);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
     }
   }
 }

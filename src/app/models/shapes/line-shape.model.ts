@@ -25,6 +25,8 @@ export class LineShapeModel extends CanvasShapeModel implements DrawInterface {
     );
     CanvasModel.ctx!.stroke();
     CanvasModel.ctx!.closePath();
+
+    this.drawSelectedShapeIfRequired();
   }
 
   drawBySoftware(): void {
@@ -36,6 +38,7 @@ export class LineShapeModel extends CanvasShapeModel implements DrawInterface {
       this.vertexList[length].x,
       this.vertexList[length].y,
     );
+    this.drawSelectedShapeIfRequired();
   }
 
   isInBounds(x: number, y: number): boolean {
@@ -64,5 +67,18 @@ export class LineShapeModel extends CanvasShapeModel implements DrawInterface {
       x: Math.floor((this.vertexList[0].x + this.vertexList[length].x) / 2),
       y: Math.floor((this.vertexList[0].y + this.vertexList[length].y) / 2),
     };
+  }
+
+  drawSelectedShapeIfRequired() {
+    if (this.isSelected) {
+      const length = this.vertexList.length - 1;
+      const xc = (this.vertexList[0].x + this.vertexList[length].x) / 2;
+      const yc = (this.vertexList[0].y + this.vertexList[length].y) / 2;
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.outlineColor;
+      CanvasModel.ctx?.rect(xc - 5, yc - 5, 10, 10);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+    }
   }
 }
