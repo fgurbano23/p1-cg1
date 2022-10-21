@@ -12,18 +12,21 @@ export class CanvasShapeModel {
 
   outlineColor = '#000';
   isSelected = false;
+  filled = false;
 
   constructor(
     type: PrimitiveEnum,
     vertex: Array<VertexInterface>,
     color: string,
     backgroundColor = '#fffff',
+    filled = false,
   ) {
     this.type = type;
     this.vertexList = vertex;
     this.id = Guid.create().toString();
     this.color = color;
     this.backgroundColor = backgroundColor;
+    this.filled = filled;
   }
 
   setSelection(selected: boolean): void {

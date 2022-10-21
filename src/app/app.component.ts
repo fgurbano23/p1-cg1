@@ -132,10 +132,17 @@ export class AppComponent implements OnInit {
     return [r / 255, g / 255, b / 255];
   }
 
-  getHexFromRGB(r: number, g: number, b: number) {
-    const hexR = (r * 255).toString(16);
-    const hexG = (g * 255).toString(16);
-    const hexB = (b * 255).toString(16);
+  getHexFromRGB(r: string, g: string, b: string) {
+    const hexR = parseInt((parseFloat(r) * 255).toString())
+      .toString(16)
+      .padStart(2, '0');
+    const hexG = parseInt((parseFloat(g) * 255).toString())
+      .toString(16)
+      .padStart(2, '0');
+    const hexB = parseInt((parseFloat(b) * 255).toString())
+      .toString(16)
+      .padStart(2, '0');
+
     return `#${hexR}${hexG}${hexB}`;
   }
 
@@ -209,6 +216,7 @@ export class AppComponent implements OnInit {
           [startXY],
           this.useStrokeColor,
           this.useBackgroundColor,
+          true,
         );
         this.currentShape = shape;
         break;
@@ -217,6 +225,7 @@ export class AppComponent implements OnInit {
           [startXY],
           this.useStrokeColor,
           this.useBackgroundColor,
+          true,
         );
         this.currentShape = shape;
         break;
@@ -225,6 +234,7 @@ export class AppComponent implements OnInit {
           [startXY],
           this.useStrokeColor,
           this.useBackgroundColor,
+          true,
         );
         this.currentShape = shape;
         break;
@@ -233,6 +243,7 @@ export class AppComponent implements OnInit {
           [startXY],
           this.useStrokeColor,
           this.useBackgroundColor,
+          true,
         );
         this.currentShape = shape;
         break;
@@ -425,7 +436,13 @@ export class AppComponent implements OnInit {
   }
 
   getColors(array: any[]) {
-    return array.slice(0, 3);
+    let bg = ['1.0', '1.0', '1.0'];
+    let color = array.slice(0, 3);
+    array.splice(0, 3);
+    if (array.length > 0) {
+      bg = array.slice(0, 3);
+    }
+    return { color, bg };
   }
 
   getPoints(array: any[], points: number) {
@@ -446,9 +463,11 @@ export class AppComponent implements OnInit {
   drawFilePrimitive(currentLine: any, cmd: string) {
     let vertexList = [];
     let color = null;
+    let bg = null;
+    let temp;
     switch (cmd) {
       case FilePrimitivesEnum.BACKGROUND:
-        color = this.getColors(currentLine);
+        color = this.getColors(currentLine).color;
         this.canvas.background = this.getHexFromRGB(
           color[0],
           color[1],
@@ -460,12 +479,17 @@ export class AppComponent implements OnInit {
       case FilePrimitivesEnum.CIRCLE:
       case FilePrimitivesEnum.FILLED_CIRCLE:
         vertexList = this.getPoints(currentLine, 2);
+        console.log(currentLine);
         currentLine.splice(0, 4);
-        color = this.getColors(currentLine);
+        console.log(currentLine);
+        temp = this.getColors(currentLine);
+        color = temp.color;
+        bg = temp.bg;
         this.currentShape = new CircleShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
-          this.useBackgroundColor,
+          this.getHexFromRGB(bg[0], bg[1], bg[2]),
+          cmd === FilePrimitivesEnum.FILLED_CIRCLE,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -474,11 +498,17 @@ export class AppComponent implements OnInit {
       case FilePrimitivesEnum.ELLIPSE:
       case FilePrimitivesEnum.FILLED_ELLIPSE:
         vertexList = this.getPoints(currentLine, 2);
-        color = this.getColors(currentLine);
+        console.log(currentLine);
+        currentLine.splice(0, 4);
+        console.log(currentLine);
+        temp = this.getColors(currentLine);
+        color = temp.color;
+        bg = temp.bg;
         this.currentShape = new EllipseShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
-          this.useBackgroundColor,
+          this.getHexFromRGB(bg[0], bg[1], bg[2]),
+          cmd === FilePrimitivesEnum.FILLED_ELLIPSE,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -487,12 +517,16 @@ export class AppComponent implements OnInit {
       case FilePrimitivesEnum.RECTANGLE:
       case FilePrimitivesEnum.FILLED_RECTANGLE:
         vertexList = this.getPoints(currentLine, 2);
-        color = this.getColors(currentLine);
-        console.log(this.getHexFromRGB(color[0], color[1], color[2]));
+        currentLine.splice(0, 4);
+        temp = this.getColors(currentLine);
+        color = temp.color;
+        bg = temp.bg;
+        console.log(color, bg);
         this.currentShape = new RectangleShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
-          this.useBackgroundColor,
+          this.getHexFromRGB(bg[0], bg[1], bg[2]),
+          cmd === FilePrimitivesEnum.FILLED_RECTANGLE,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
@@ -501,21 +535,27 @@ export class AppComponent implements OnInit {
       case FilePrimitivesEnum.TRIANGLE:
       case FilePrimitivesEnum.FILLED_TRIANGLE:
         vertexList = this.getPoints(currentLine, 3);
-        color = this.getColors(currentLine);
+        currentLine.splice(0, 6);
+        temp = this.getColors(currentLine);
+        color = temp.color;
+        bg = temp.bg;
         console.log(this.getHexFromRGB(color[0], color[1], color[2]));
         this.currentShape = new TriangleShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),
-          this.useBackgroundColor,
+          this.getHexFromRGB(bg[0], bg[1], bg[2]),
+          cmd === FilePrimitivesEnum.FILLED_TRIANGLE,
         );
         this.elementsOnScreen.push(this.currentShape);
         this.updateCanvasAndDraws();
         break;
 
       case FilePrimitivesEnum.LINE:
-        color = this.getColors(currentLine);
-        console.log(this.getHexFromRGB(color[0], color[1], color[2]));
         vertexList = this.getPoints(currentLine, 2);
+        currentLine.splice(0, 4);
+        temp = this.getColors(currentLine);
+        color = temp.color;
+        console.log(this.getHexFromRGB(color[0], color[1], color[2]));
         this.currentShape = new LineShapeModel(
           vertexList,
           this.getHexFromRGB(color[0], color[1], color[2]),

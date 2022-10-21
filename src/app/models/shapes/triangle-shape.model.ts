@@ -12,8 +12,9 @@ export class TriangleShapeModel
     vertexList: Array<VertexInterface>,
     color: string,
     background: string,
+    filled: boolean,
   ) {
-    super(PrimitiveEnum.TRIANGLE, vertexList, color, background);
+    super(PrimitiveEnum.TRIANGLE, vertexList, color, background, filled);
   }
 
   drawByHardware(): void {

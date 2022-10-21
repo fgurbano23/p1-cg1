@@ -12,8 +12,9 @@ export class CircleShapeModel extends CanvasShapeModel {
     vertexList: Array<VertexInterface>,
     color: string,
     background: string,
+    filled: boolean,
   ) {
-    super(PrimitiveEnum.CIRCLE, vertexList, color, background);
+    super(PrimitiveEnum.CIRCLE, vertexList, color, background, filled);
     this.x = 0;
     this.y = 0;
     this.r = 0;
@@ -81,61 +82,63 @@ export class CircleShapeModel extends CanvasShapeModel {
 
   plotPoints(xc: number, yc: number) {
     // Print background line by line
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc + this.x, yc + this.y);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+    if (this.filled) {
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc + this.x, yc + this.y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc - this.x, yc + this.y);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc - this.x, yc + this.y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc + this.x, yc - this.y);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc + this.x, yc - this.y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc - this.x, yc - this.y);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc - this.x, yc - this.y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc + this.y, yc + this.x);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc + this.y, yc + this.x);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc - this.y, yc + this.x);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc - this.y, yc + this.x);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc + this.y, yc - this.x);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc + this.y, yc - this.x);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
 
-    CanvasModel.ctx!.beginPath();
-    CanvasModel.ctx!.strokeStyle = this.backgroundColor;
-    CanvasModel.ctx!.moveTo(xc, yc);
-    CanvasModel.ctx?.lineTo(xc - this.y, yc - this.x);
-    CanvasModel.ctx!.stroke();
-    CanvasModel.ctx!.closePath();
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(xc, yc);
+      CanvasModel.ctx?.lineTo(xc - this.y, yc - this.x);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+    }
 
     // Print outline border
     CanvasModel.ctx!.beginPath();

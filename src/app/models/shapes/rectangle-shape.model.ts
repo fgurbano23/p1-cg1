@@ -12,8 +12,9 @@ export class RectangleShapeModel
     vertexList: Array<VertexInterface>,
     color: string,
     background: string,
+    filled: boolean,
   ) {
-    super(PrimitiveEnum.RECTANGLE, vertexList, color, background);
+    super(PrimitiveEnum.RECTANGLE, vertexList, color, background, filled);
   }
 
   drawByHardware(): void {
