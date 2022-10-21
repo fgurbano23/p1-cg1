@@ -18,6 +18,16 @@ export class TriangleShapeModel
   }
 
   drawByHardware(): void {
+    this.vertexList.sort((a: VertexInterface, b: VertexInterface) => {
+      if (a.x < b.x) {
+        return -1;
+      }
+      if (a.x > b.x) {
+        return 1;
+      }
+      return 0;
+    });
+
     // Draw the initial points
     if (this.vertexList.length < 3) {
       CanvasModel.ctx!.beginPath();
@@ -43,6 +53,9 @@ export class TriangleShapeModel
     }
 
     // Draw the triangle
+    if (this.filled) {
+      this.fillTriangle();
+    }
 
     if (this.vertexList.length === 3) {
       CanvasModel.ctx!.beginPath();
@@ -106,5 +119,34 @@ export class TriangleShapeModel
     const crossProd = ab.x * ac.y - ab.y * ac.x;
 
     return Math.abs(crossProd) / 2;
+  }
+
+  fillTriangle() {
+    let x = this.vertexList[0].x + 1;
+    let isFilled = false;
+
+    let m =
+      (this.vertexList[2].y - this.vertexList[0].y) /
+      (this.vertexList[2].x - this.vertexList[0].x);
+    const b = this.vertexList[2].y - m * this.vertexList[2].x;
+
+    while (!isFilled) {
+      if (x >= this.vertexList[2].x) {
+        isFilled = true;
+        break;
+      }
+
+      let yStart = m * x + b;
+      let point = { x: x, y: yStart };
+
+      CanvasModel.ctx!.beginPath();
+      CanvasModel.ctx!.strokeStyle = this.backgroundColor;
+      CanvasModel.ctx!.moveTo(x, point.y);
+
+      CanvasModel.ctx!.lineTo(this.vertexList[1].x, this.vertexList[1].y);
+      CanvasModel.ctx!.stroke();
+      CanvasModel.ctx!.closePath();
+      x++;
+    }
   }
 }
